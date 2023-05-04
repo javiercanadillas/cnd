@@ -244,7 +244,7 @@ python main.py
 There's much more to Rye, this is just scratching the surface of what seems like a very promising tool.
 
 {% note %}
-**Discussion**: How does this compare to the methods outlined before?
+**Note**: How does this compare to the methods outlined before?
 {% endnote %}
 
 <div style="padding: 15px; border: 1px solid transparent; border-color: transparent; margin-bottom: 20px; border-radius: 4px; color: #31708f; background-color: #d9edf7; border-color: #bce8f1;">
