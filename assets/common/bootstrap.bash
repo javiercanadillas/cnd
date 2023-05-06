@@ -3,7 +3,7 @@
 #shellcheck disable=SC2317
 return 0  2>/dev/null || :
 
-source "../common/common_bash_libs"
+source "./common_bash_libs"
 
 # Configures a basic working Cloud Shell environment for Qwiklabs
 configure_qw_cs() {
@@ -18,7 +18,7 @@ create_basic_structure() {
   # Reassign the workdir to the code folder
   workdir="$workdir/code"
   # Save the workdir to the custom bash env file
-  echo "export WORKDIR=$workdir" >> "$HOME/.labenv_custom.bash" 
+  echo "export WORKDIR=$workdir" >> "<$HOME/.labenv_custom.bash" 
 }
 
 install_pyenv() {
