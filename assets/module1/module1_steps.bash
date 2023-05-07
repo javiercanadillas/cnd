@@ -7,9 +7,14 @@ source "../common/common_bash_libs"
 
 # Check that basic module 1 bootstrap has been done
 check_module1_bootstrap() {
-  info "Checking that module 1 has been bootstrapped..."
-  [[ -f "$HOME/.config/cnd/.module1_bootstrap.done" ]] || { error "Module 1 has not been bootstrapped"; return 1; }
-  info "Module 1 has been bootstrapped, continuing..."
+  # This script should not continue if Project ID is not set
+  _info "Checking that Project ID has been properly set..."
+  project_id="${PROJECT_ID:-$(gcloud config get-value project --quiet 2> /dev/null)}"
+  [[ -z $project_id ]] && {
+    _error "Project ID has not been set. Please, run \"gcloud config set project <project_id>\" and try again."; exit 1; }
+  region="${REGION:-$(gcloud config get-value compute/region 2>/dev/null)}"
+  [[ -z $region ]] && {
+    _info "No region was provided. Assigning default compute region europe-west1."; region="europe-west1"; }
 }
 
 # Setup myfirstapp dir structure
@@ -58,9 +63,9 @@ wrap_up() {
 
 main() {
   check_module1_bootstrap
-  #set_myfirstapp_structure
+  set_myfirstapp_structure
   set_python_environment
-  #wrap_up
+  wrap_up
 }
 
 main "$@"
