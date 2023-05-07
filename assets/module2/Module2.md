@@ -93,7 +93,6 @@ README.md
 
 Build your image tagging using Docker. Tag it with the proper Artifact Registry ID (it should follow the convention `LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`):
 ```bash
-gcloud artifact 
 docker build -t "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" .
 ```
 
