@@ -4,9 +4,9 @@
 
 ## Main Script vars
 # shellcheck disable=SC2128
-script_name=$(basename "$BASH_SOURCE")
-#shellcheck disable=SC2128
-script_dir=$(dirname "$(readlink --canonicalize --no-newline "$BASH_SOURCE")")
+script_name=$(basename "$0")
+#shellcheck disable=SC2128,SC2034
+script_dir=$(dirname "$(readlink --canonicalize --no-newline "$0")")
 # Look & feel related vars
 red=$(tput setaf 1)
 green=$(tput setaf 2)

@@ -2,12 +2,34 @@
 
 ## Bootstrapping this module
 
+If you have just followed module 1, there's nothing additional for you to do here.
+
+However, **if you're starting fresh from a new Qwiklabs project**, you need to do the following steps:
+
+1. Do the steps in the [Readme.md](../../Readme.md) file.
+2. Bootstrap your environment:
+  ```bash
+  cd $HOME/cnd/assets/common
+  ./bootstrap.bash
+  ```
+3. Source your `.bashrc` environment:
+  ```bash
+  source $HOME/.bashrc
+  ```
+4. Perform the module 1 steps in an automated way:
+  ```bash
+  cd $WORKDIR/assets/module1
+  ./module1_steps.bash
+  cd $WORKDIR
+
+Now you should be ready to continue with Module 2. Read on.
+
 ## Packaging the application into a container image
 
 You will now create the necessary Dockerfile specifying how the container image should be built. 
 
 ```bash
-cd $WORKDIR
+cd $WORKDIR/myfirstapp
 cloudshell open-workspace .
 cloudshell edit Dockerfile
 ```
@@ -43,6 +65,16 @@ RUN pip install \
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 ```
 
+As you'll be using Gunicorn, you'll also need to install it as a dependency. Come back to the terminal and type:
+
+```bash
+cd $WORKDIR/myfirstapp
+source .venv/bin/activate
+pip install gunicorn
+pip freeze > $WORKDIR/requirements.txt
+deactivate
+```
+
 **Discussion: what's a container image? What's a Dockerfile useful for?**
 
 Now, add the following `.dockerignore` file as to not include unnecessary clutter into your container image:
@@ -57,20 +89,9 @@ README.md
 **/.pytest_cache
 ```
 
-You also need to enable the Cloud Run Service in your GCP project:
-```bash
-gcloud services enable run.googleapis.com
-```
-
 ### Building and publishing a container with Docker
 
-First, you'll need a new Docker Artifact Repository where to push your image:
-```bash
-gcloud artifacts repositories create docker-main --location=europe-west1 --repository-format=docker
-gcloud artifacts repositories list
-```
-
-Now, build your image tagging using Docker. Tag it with the proper Artifact Registry ID (it should follow the convention `LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`):
+Build your image tagging using Docker. Tag it with the proper Artifact Registry ID (it should follow the convention `LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`):
 ```bash
 gcloud artifact 
 docker build -t "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" .
@@ -94,24 +115,39 @@ docker run -e PORT=8080 -p 8080:8080 $REGION-docker.pkg.dev/$PROJECT_ID/docker-m
 
 ### Pushing the image to a remote registry
 
-You'll now push the image to a remote registry where Cloud Run can pull the image from. For this to work, you'll need configure Docker so it has the right credentials to push images to the Artifact Registry Docker repository that you created in the steps above:
+You'll now push the image to a remote registry where Cloud Run can pull the image from.
+
+The first thing you'll need is a Docker Artifact Registry where to push your image:
+```bash
+gcloud artifacts repositories create docker-main --location=europe-west1 --repository-format=docker
+gcloud artifacts repositories list
+```
+
+For the docker daemon to be able to push images to a remote registry, you'll need to authenticate and authorize. This means configuring Docker so it has the right credentials to push images to the Artifact Registry docker registry that you created in the steps above:
 ```bash
 gcloud auth configure-docker $REGION-docker.pkg.dev
 docker push $REGION-docker.pkg.dev/qwiklabs-gcp-04-219ef26f6927/docker-main/myfirstapp
 ```
 
-List the images in the remote repository and check that your image is now there:
+List the images in the remote repository and check that your image is there:
 ```bash
 gcloud artifacts docker images list $REGION-docker.pkg.dev/$PROJECT_ID/docker-main
 ```
 
 Finally, use the Google Cloud SDK to tell Cloud Run to fetch the image from the Artifact Registry repo and deploy it:
 ```bash
+# You also need to enable the Cloud Run Service in your GCP project:
+gcloud services enable run.googleapis.com
+# And then deploy the app
 gcloud run deploy myfirstapp \
   --image "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
 ```
+
+**Discussion: what's happening when you use the `--set-env-vars` option with the `gcloud` command?**
+
+**Discussion: how can you test the app now?**
 
 ### Building and publishing a container with Cloud Build
 
@@ -132,6 +168,11 @@ gcloud run deploy myfirstapp \
   --image "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
+```
+
+Get the service URL so you can test it:
+```bash
+gcloud run services describe myfirstapp
 ```
 
 ### Further automating the build and deploy process with the Google Cloud SDK

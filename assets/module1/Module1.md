@@ -20,15 +20,15 @@ First, let's create a simple project structure by creating a directory to hold a
 
 ```bash
 touch $HOME/.labenv_custom.bash
-echo "export WORKDIR="$HOME/code/myfirstapp"" >> "$HOME/.labenv_custom.bash"
+echo "export WORKDIR="$HOME/cnd"" >> "$HOME/.labenv_custom.bash"
 source $HOME/.labenv_custom.bash
-mkdir -p $WORKDIR/src
+mkdir -p $WORKDIR/myfirstapp/src
 ```
 
 Inside this folder, let's create a basic structure for our service:
 
 ```bash
-cd $WORKDIR
+cd $WORKDIR/myfirstapp
 ```
 
 **Discussion: project/folder structures and languages**
@@ -143,13 +143,6 @@ if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 ```
 
-As you're using Gunicorn, you'll also need to install it as a dependency:
-
-```bash
-pip install gunicorn
-pip freeze > $WORKDIR/requirements.txt
-```
-
 Now, test locally your application:
 
 ```bash
@@ -161,7 +154,7 @@ Open a new terminal, and request the main page running in port 8080. For this to
 curl localhost:8080
 ```
 
-Close the previous gunicorn instance by pressing `Ctrl-C`.
+Close the previous application by pressing `Ctrl-C`.
 
 Review your app dependencies so far, these will have to be included in your container image when we package the application:
 

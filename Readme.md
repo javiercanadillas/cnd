@@ -22,8 +22,16 @@ This configures a sane prompt that will give you hints on things like Python vir
 . "$HOME/.bashrc"
 ```
 
+Finally, clone this repo:
+
+```bash
+cd $HOME; git clone https://github.com/javiercanadillas/cnd
+cd cnd
+```
+
 ## Cloud Native Development with Python and Cloud Run
 
 The following modules will walk you through the concepts you'll be practicing with in this lab:
 
-- [Module 1 - Getting started with Python and Cloud Run](./Module1.md)
+- [Module 1 - Getting started with Python development for Cloud](./assets/module1/Module1.md)
+- [Module 2 - Packaging into a container image and deploying into Cloud Run](./assets/module2/Module2.md)

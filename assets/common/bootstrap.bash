@@ -14,11 +14,7 @@ configure_qw_cs() {
 create_basic_structure() {
   # Set the workdir at the git repo base level
   workdir="$script_dir/../.."
-  mkdir -p "$workdir/code/src"
-  # Reassign the workdir to the code folder
-  workdir="$workdir/code"
-  # Save the workdir to the custom bash env file
-  echo "export WORKDIR=$workdir" >> "<$HOME/.labenv_custom.bash" 
+  echo "export WORKDIR=\"$workdir\"" >> "$HOME/.labenv_custom.bash" 
 }
 
 install_pyenv() {
@@ -51,9 +47,17 @@ wrap_up() {
   local -r registry_dir="$HOME/.config/cnd"
   mkdir -p "$registry_dir"
   touch "$registry_dir/.module1_bootstrap.done"
-  warning "You must run "source \$HOME/.bashrc" before continuing"
+  warning "You must run \"source \$HOME/.bashrc\" before continuing"
 }
 
 main() {
   check_basic_requirements
+  create_basic_structure
+  install_pyenv
+  set_git_config
+  # Undocumented option to automatically install Rye
+  [[ $1 == "rye" ]] && install_rye
+  wrap_up
 }
+
+main "$@"
