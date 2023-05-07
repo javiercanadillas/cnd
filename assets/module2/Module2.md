@@ -101,10 +101,16 @@ Check that you've got the image locally:
 docker image ls
 ```
 
+Inspect the image to see its layers composition:
+```bash
+docker image inspect $(docker image ls --quiet)
+```
+
 Where's the image? You can check how the image is hosted in your local Cloud Shell:
 ```bash
-sudo ls /var/lib/docker/image/overlay2/imagedb/content/sha256
-sudo cat /var/lib/docker/image/overlay2/imagedb/content/sha256/* | jq
+IMAGE_SHA=$(sudo ls /var/lib/docker/image/overlay2/imagedb/content/sha256)
+echo $IMAGE_SHA
+sudo cat /var/lib/docker/image/overlay2/imagedb/content/sha256/$IMAGE_SHA | jq
 ```
 
 Run the container locally:
