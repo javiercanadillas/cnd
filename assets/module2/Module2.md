@@ -235,6 +235,11 @@ gcloud run deploy myfirstapp \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
 ```
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> ef94b12 (Merging)
 
 ### Using Cloud Run's service manifest
 
@@ -272,4 +277,3 @@ gcloud run services update myfirstapp
 ```
 
 ## Automating the inner development loop
-
