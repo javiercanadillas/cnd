@@ -28,6 +28,13 @@ warning() {
   echo "${yellow}${script_name}${reset}: ${1}" >&2
 }
 
+## Pretty prints including the width of the script name in spaces for correct alignment
+printfx() {
+  local -f message="$1" && shift
+  script_name_width=${#script_name}
+  printf "%*s $message" "$script_name_width"
+}
+
 # Checks that project ID and region have been set up
 check_basic_requirements() {
   # This script should not continue if Project ID or Region are not set
