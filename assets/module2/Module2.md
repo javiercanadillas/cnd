@@ -238,6 +238,8 @@ gcloud run deploy myfirstapp \
 
 ### Using Cloud Run's service manifest
 
+Cloud Run is compatible with Knative.
+
 ```yaml
 apiVersion: serving.knative.dev/v1
 kind: Service
