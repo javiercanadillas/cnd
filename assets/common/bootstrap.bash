@@ -47,9 +47,9 @@ wrap_up() {
   local -r registry_dir="$HOME/.config/cnd"
   mkdir -p "$registry_dir"
   touch "$registry_dir/.module1_bootstrap.done"
-  echo    "--------------------------------------------------------"
+  printfx "--------------------------------------------------------"
   warning "You must run \"source \$HOME/.bashrc\" before continuing"
-  echo    "--------------------------------------------------------"
+  printfx "--------------------------------------------------------"
 }
 
 main() {

@@ -2,9 +2,11 @@
 
 ## Bootstrapping this module
 
-If you have just followed module 1, there's nothing additional for you to do here.
+This module builds on the work done in [Module 1](../module1/Module1.md).
 
-However, **if you're starting fresh from a new Qwiklabs project**, you need to do the following steps:
+If you have just finished Module 1 without stopping your Qwiklabs lab, there's nothing additional for you to do in this section and you should continue to [Packaging the application into a container image](packaging_the_application_into_a_container_image) section below.
+
+However, **if you're starting fresh from a new Qwiklabs lab** because you did Module 1 some day in the past, you need to do the following steps to automatically replay the steps done in Module 1.
 
 1. Do the steps in the [Readme.md](../../Readme.md) file.
 2. Bootstrap your environment:
@@ -21,6 +23,7 @@ However, **if you're starting fresh from a new Qwiklabs project**, you need to d
   cd $WORKDIR/assets/module1
   ./module1_steps.bash
   cd $WORKDIR
+  ```
 
 Now you should be ready to continue with Module 2. Read on.
 
@@ -71,7 +74,7 @@ As you'll be using Gunicorn, you'll also need to install it as a dependency. Com
 cd $WORKDIR/myfirstapp
 source .venv/bin/activate
 pip install gunicorn
-pip freeze > $WORKDIR/requirements.txt
+pip freeze > requirements.txt
 deactivate
 ```
 
@@ -89,12 +92,14 @@ README.md
 **/.pytest_cache
 ```
 
-### Building and publishing a container with Docker
+### Building and publishing a container image with Docker
 
 Build your image tagging using Docker. Tag it with the proper Artifact Registry ID (it should follow the convention `LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`):
 ```bash
 docker build -t "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" .
 ```
+
+**Discussion: what's the meaning of the -t option used above?**
 
 Check that you've got the image locally:
 ```bash
@@ -124,20 +129,59 @@ You'll now push the image to a remote registry where Cloud Run can pull the imag
 
 The first thing you'll need is a Docker Artifact Registry where to push your image:
 ```bash
-gcloud artifacts repositories create docker-main --location=europe-west1 --repository-format=docker
+# Enable Artifact Registry repository
+gcloud services enable artifactregistry.googleapis.com
+# Create the repository
+gcloud artifacts repositories create docker-main --location=$REGION --repository-format=docker
+# List the recentlly created repository
 gcloud artifacts repositories list
 ```
 
 For the docker daemon to be able to push images to a remote registry, you'll need to authenticate and authorize. This means configuring Docker so it has the right credentials to push images to the Artifact Registry docker registry that you created in the steps above:
 ```bash
 gcloud auth configure-docker $REGION-docker.pkg.dev
-docker push $REGION-docker.pkg.dev/qwiklabs-gcp-04-219ef26f6927/docker-main/myfirstapp
+docker push $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
 ```
 
 List the images in the remote repository and check that your image is there:
 ```bash
 gcloud artifacts docker images list $REGION-docker.pkg.dev/$PROJECT_ID/docker-main
 ```
+
+### Image tags and image digests
+
+(This section is based on the more detailed article [Using container image digests](https://cloud.google.com/kubernetes-engine/docs/archive/using-container-images))
+
+When working with container images, image tags are a common way of referring to different revisions of an image. Something that is typically done is to tag images with a version identifier at build time, like v1.1.
+
+Tags make image revisions easy to manage by using human-readable identifiers. However, tags are mutable references, which means the image referenced by a tag can change, as illustrated in the following diagram:
+
+<p align="center">
+  <img width="460" height="300" src="https://cloud.google.com/static/architecture/images/using-container-images-1-tags.svg">
+</p>
+
+To understand how the tags and digests are used, it's better to visualize the overall components of a container image:
+
+<p align="center">
+  <img width="460" height="300" src="https://cloud.google.com/static/architecture/images/using-container-images-2-structure.svg">
+</p>
+
+Let's pull all the information from the published image using the Docker v2 REST API that Artifact Registry is implementing:
+
+```bash
+# Gets the image digest from the Artifact Registry repository
+IMAGE_DIGEST="$(gcloud artifacts docker images describe \
+    $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp:latest \
+    --format 'value(image_summary.digest)')"
+# Gets a list of tags for the image
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" https://$REGION-docker.pkg.dev/v2/$PROJECT_ID/docker-main/myfirstapp/tags/list
+# Gets the image manifest
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" https://$REGION-docker.pkg.dev/v2/$PROJECT_ID/docker-main/myfirstapp/manifests/$IMAGE_DIGEST | less
+```
+
+What's important from all this is that to deploy container images in a reliable way (a software delivery pipeline, actually) it is best to rely on image digests instead of image tags. You'll be working however with both indistinctively during these modules as not not overcomplicate your practice.
+
+### Deploying the image on Cloud Run
 
 Finally, use the Google Cloud SDK to tell Cloud Run to fetch the image from the Artifact Registry repo and deploy it:
 ```bash
@@ -191,3 +235,41 @@ gcloud run deploy myfirstapp \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
 ```
+
+### Using Cloud Run's service manifest
+
+```yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: myfirstapp
+  labels:
+    cloud.googleapis.com/location: europe-west1
+spec:
+  template:
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+      - image: europe-west1-docker.pkg.dev/qwiklabs-gcp-02-5b52e4390a8d/docker-main/myfirstapp
+        ports:
+        - name: http1
+          containerPort: 8080
+        env:
+        - name: NAME
+          value: MSBC
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: 1000m
+  traffic:
+  - percent: 100
+    latestRevision: true
+```
+
+```bash
+gcloud run services update myfirstapp
+```
+
+## Automating the inner development loop
+
