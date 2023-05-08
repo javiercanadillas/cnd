@@ -21,6 +21,7 @@ However, **if you're starting fresh from a new Qwiklabs project**, you need to d
   cd $WORKDIR/assets/module1
   ./module1_steps.bash
   cd $WORKDIR
+  ```
 
 Now you should be ready to continue with Module 2. Read on.
 
