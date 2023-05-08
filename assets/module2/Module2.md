@@ -272,14 +272,12 @@ spec:
 ```
 
 Modify the file so it reflects the proper environment variables and place it into your application directory:
-
 ```bash
 mkdir -p "$WORKDIR/myfirstapp/cloudrun-manifests"
 envsubst < "$WORKDIR/assets/module2/cloudrun-manifests/myfirstapp-cloudrun-service.yaml" > "$WORKDIR/myfirstapp/cloudrun-manifests/myfirstapp-cloudrun-service.yaml"
 ```
 
 Then, deploy the service using the manifest file:
-```bash
 ```bash
 gcloud run services update myfirstapp
 ```
