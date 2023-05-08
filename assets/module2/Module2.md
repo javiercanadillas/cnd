@@ -238,7 +238,9 @@ gcloud run deploy myfirstapp \
 
 ### Using Cloud Run's service manifest
 
-Cloud Run is compatible with Knative.
+Cloud Run is compatible with Knative. This means you can use a manifest file to define your service.
+
+Inspect the file in `$WORKDIR/assets/module2/cloudrun-manifests/myfirstapp-cloudrun-service.yaml`, that looks like this:
 
 ```yaml
 apiVersion: serving.knative.dev/v1
@@ -246,14 +248,14 @@ kind: Service
 metadata:
   name: myfirstapp
   labels:
-    cloud.googleapis.com/location: europe-west1
+    cloud.googleapis.com/location: $REGION
 spec:
   template:
     spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-      - image: europe-west1-docker.pkg.dev/qwiklabs-gcp-02-5b52e4390a8d/docker-main/myfirstapp
+      - image: $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
         ports:
         - name: http1
           containerPort: 8080
@@ -269,6 +271,15 @@ spec:
     latestRevision: true
 ```
 
+Modify the file so it reflects the proper environment variables and place it into your application directory:
+
+```bash
+mkdir -p "$WORKDIR/myfirstapp/cloudrun-manifests"
+envsubst < "$WORKDIR/assets/module2/cloudrun-manifests/myfirstapp-cloudrun-service.yaml" > "$WORKDIR/myfirstapp/cloudrun-manifests/myfirstapp-cloudrun-service.yaml"
+```
+
+Then, deploy the service using the manifest file:
+```bash
 ```bash
 gcloud run services update myfirstapp
 ```
