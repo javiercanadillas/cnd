@@ -20,7 +20,6 @@ However, **if you're starting fresh from a new Qwiklabs lab** because you did Mo
   ```bash
   source "$HOME/.bashrc"
   ```
-  ```
 
 Now you should be ready to continue with Module 2. Read on.
 
