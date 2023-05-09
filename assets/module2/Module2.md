@@ -196,7 +196,7 @@ gcloud run deploy myfirstapp \
   --set-env-vars="NAME=CND"
 ```
 
-As this is the first time you're deploying an app on Cloud Run, it will take a bit of time while the service is being activatedgcl
+As this is the first time you're deploying an app on Cloud Run, it will take a bit of time while the service is being activated.
 
 **Discussion: what's happening when you use the `--set-env-vars` option with the `gcloud` command?**
 
