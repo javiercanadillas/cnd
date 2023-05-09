@@ -14,7 +14,7 @@ However, **if you're starting fresh from a new Qwiklabs lab** because you did Mo
   ```
 2. Run Module 1's bootstrap script:
   ```bash
-  cd "$HOME/cnd/assets/module1" && ./module1_bootstrap.bash
+  cd "$HOME/cnd/assets/module1" && ./module1_replay_steps.bash
   ``` 
 3. As requested in the output of the previous script, source your `.bashrc` file
   ```bash
