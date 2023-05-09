@@ -3,10 +3,6 @@
 # This script is intended to be sourced
 
 ## Main Script vars
-# shellcheck disable=SC2128
-script_name=$(basename "$0")
-#shellcheck disable=SC2128,SC2034
-script_dir=$(dirname "$(readlink --canonicalize --no-newline "$0")")
 # Look & feel related vars
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -30,9 +26,9 @@ warning() {
 
 ## Pretty prints including the width of the script name in spaces for correct alignment
 printfx() {
-  local -f message="$1" && shift
+  local -r message="$1" && shift
   script_name_width=${#script_name}
-  printf "%*s $message" "$script_name_width"
+  printf "%*s  $message\n" "$script_name_width"
 }
 
 # Checks that project ID and region have been set up
