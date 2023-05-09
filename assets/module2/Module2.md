@@ -27,14 +27,17 @@ Now you should be ready to continue with Module 2. Read on.
 
 You will now create the necessary Dockerfile specifying how the container image should be built. 
 
+Copy the following Dockerfile into your application directory:
 ```bash
-cd $WORKDIR/myfirstapp
-cloudshell open-workspace .
-cloudshell edit Dockerfile
+cp $WORKDIR/assets/module2/Dockerfile $WORKDIR/myfirstapp
 ```
 
-Type the following file in the `Dockerfile` file:
+Open the dockerfile in the Cloud Shell Editor:
+```bash
+cloudshell edit $WORKDIR/myfirstapp/Dockerfile
+```
 
+The file should look like this:
 ```Dockerfile
 # Use the official lightweight Python image.
 # https://hub.docker.com/_/python
@@ -77,7 +80,11 @@ deactivate
 **Discussion: what's a container image? What's a Dockerfile useful for?**
 
 Now, add the following `.dockerignore` file as to not include unnecessary clutter into your container image:
+```bash
+cp $WORKDIR/assets/module2/.dockerignore $WORKDIR/myfirstapp
+```
 
+The file should look like this:
 ```text
 Dockerfile
 README.md
