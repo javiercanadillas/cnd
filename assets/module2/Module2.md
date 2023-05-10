@@ -12,7 +12,7 @@ However, **if you're starting fresh from a new Qwiklabs lab** because you did Mo
   ```bash
   git clone https://github.com/javiercanadillas/cnd.git
   ```
-2. Run Module 1's bootstrap script:
+2. Run Module 1 steps replay script:
   ```bash
   cd "$HOME/cnd/assets/module1" && ./module1_replay_steps.bash
   ``` 
@@ -21,7 +21,9 @@ However, **if you're starting fresh from a new Qwiklabs lab** because you did Mo
   source "$HOME/.bashrc"
   ```
 
-Now you should be ready to continue with Module 2. Read on.
+It will also be necessary that you open the console in [console.cloud.google.com](https://console.cloud.google.com), accept the terms, activate the Qwiklabs project and from there enable Cloud Shell and the Cloud Shell editor.
+
+Once all this has been done, you should be ready to continue with Module 2. Read on.
 
 ## Packaging the application into a container image
 
@@ -126,11 +128,13 @@ Run the container locally:
 docker run -e PORT=8080 -p 8080:8080 $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
 ```
 
+Inspect that the application is running correctly and once done, press `Ctrl+C` to stop the container.
+
 ### Pushing the image to a remote registry
 
 You'll now push the image to a remote registry where Cloud Run can pull the image from.
 
-The first thing you'll need is a Docker Artifact Registry where to push your image:
+The first thing you'll need is a Docker Artifact Registry repository where to push your image:
 ```bash
 # Enable Artifact Registry repository
 gcloud services enable artifactregistry.googleapis.com
@@ -145,6 +149,8 @@ For the docker daemon to be able to push images to a remote registry, you'll nee
 gcloud auth configure-docker $REGION-docker.pkg.dev
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
 ```
+
+When asked, answer yes.
 
 List the images in the remote repository and check that your image is there:
 ```bash
@@ -196,6 +202,8 @@ gcloud run deploy myfirstapp \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
 ```
+
+As this is the first time you're deploying an app on Cloud Run, it will take a bit of time while the service is being activated.
 
 **Discussion: what's happening when you use the `--set-env-vars` option with the `gcloud` command?**
 
