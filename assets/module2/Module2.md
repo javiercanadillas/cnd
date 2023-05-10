@@ -292,5 +292,3 @@ Then, deploy the service using the manifest file:
 ```bash
 gcloud run services update myfirstapp
 ```
-
-## Automating the inner development loop
