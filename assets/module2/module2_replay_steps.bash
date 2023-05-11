@@ -21,21 +21,26 @@ check_module1_bootstrap() {
 
 ## Copy the Docker assets to the app dir
 set_docker_assets_and_deps() {
-  local -r cp_source="$script_dir/../assets/module2"
+  local -r cp_source="$script_dir"
   cp -- "$cp_source/Dockerfile" \
     "$cp_source/.dockerignore" \
     "$cp_source/requirements.txt" \
     "$WORKDIR/myfirstapp"
-
 }
+
 ## Set GCP services
 create_gcp_services() {
   info "Creating necessary GCP services..."
-  gcloud services enable artifactregistry.googleapis.com run.googleapis.com
+  gcloud services enable \
+    artifactregistry.googleapis.com \
+    run.googleapis.com \
+    --quiet 2>/dev/null
   #shellcheck disable=SC2153
   # Variable should be comming from the environment, checked with cloudshell_bootstrap.bash
-  gcloud artifacts repositories create docker-main --location="$REGION" --repository-format=docker
-  gcloud artifacts repositories list
+  gcloud artifacts repositories create docker-main \
+    --location="$REGION" \
+    --repository-format=docker \
+    --quiet 2>/dev/null
 }
 
 ## Deploy the app to Cloud Run
@@ -43,7 +48,8 @@ deploy_to_cloudrun() {
   pushd "$WORKDIR/myfirstapp" || { error "Failed to move to dir $WORKDIR/myfirstapp. Exiting"; exit 1; }
   gcloud run deploy myfirstapp \
   --source .  --allow-unauthenticated \
-  --set-env-vars="NAME=CND"
+  --set-env-vars="NAME=CND" \
+  --quiet 2>/dev/null
   popd || exit 1
 }
 
