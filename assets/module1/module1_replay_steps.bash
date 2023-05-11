@@ -3,6 +3,9 @@
 #shellcheck disable=SC2317
 return 0  2>/dev/null || :
 
+# Using the system python version by default for pyenv, hence skipping slow Python installation
+app_python_version="system"
+
 # shellcheck disable=SC2128
 script_name=$(basename "$0")
 #shellcheck disable=SC2128,SC2034
@@ -49,14 +52,20 @@ set_myfirstapp_structure() {
   fi
 }
 
+# Install python version
+install_python_version() {
+  local -r py_version="$1" && shift
+  
+  info "Installing Python $py_version and setting it as global..."
+  warning "This may take a while..."
+  pyenv install "$py_version"
+}
+
 # Setup python environment
 set_python_environment() {
-  info "Setting up python environment..."
-  
-  info "Installing Python 3.11.3 and setting it as global..."
-  warning "This may take a while..."
-  pyenv install 3.11.3
-  pyenv global 3.11.3
+  local -r py_version="$1" && shift
+  info "Setting Python $py_version as global..."
+  pyenv global "$py_version"
   pushd "$WORKDIR/myfirstapp" || { error "Failed to move to dir $WORKDIR/myfirstapp. Exiting"; exit 1; }
   
   info "Creating virtual environment in $WORKDIR/myfirstapp..."
@@ -96,7 +105,9 @@ main() {
   #shellcheck disable=SC1091
   source "$HOME/.labenv_custom.bash"
   set_myfirstapp_structure
-  set_python_environment
+  # By default, use the system python version  
+  [[ "$app_python_version" == "system" ]] || install_python_version "${app_python_version:-3.11.1}"
+  set_python_environment "$app_python_version"
   wrap_up
 }
 
