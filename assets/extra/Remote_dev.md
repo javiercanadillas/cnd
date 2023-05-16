@@ -48,7 +48,7 @@ Open VScode, press `Cmd + Shift + P` (or `Ctrl + Shift + P` if you're in Windows
 
 You will next be asked to add a host entry to the config file with the IP address and user account as the only details that are specific to you. This file is saved as config in the ~/.ssh folder if you're using a Linux or Mac computer.
 
-~[ssh config file](https://miro.medium.com/v2/resize:fit:1400/0*buPytl9Prsd9U__w)
+![ssh config file](https://miro.medium.com/v2/resize:fit:1400/0*buPytl9Prsd9U__w)
 
 Now, you should be able to connect to Cloud Shell. Use `Cmd +  Shift + P` (or `Ctrl + Shift + P`) again in VSCode and type/select the option "Remote-SSH: Connect to Host..."
 
