@@ -87,7 +87,7 @@ wrap_up() {
   info "Registering successful replay of module 1 steps..."
   local -r registry_dir="$HOME/.config/cnd"
   mkdir -p "$registry_dir"
-  touch "$registry_dir/.module1_steps.done"
+  touch "$registry_dir/.module1_replay_steps.done"
   printfx "--------------------------------------------------------"
   warning "You must run \"source \$HOME/.bashrc\" before continuing"
   printfx "--------------------------------------------------------"
