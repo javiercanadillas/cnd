@@ -5,11 +5,11 @@ return 0  2>/dev/null || :
 
 # Using the system python version by default for pyenv, hence skipping slow Python installation
 app_python_version="system"
-
-# shellcheck disable=SC2128
+# shellcheck disable=SC2128,SC2034
 script_name=$(basename "$0")
 #shellcheck disable=SC2128,SC2034
 script_dir=$(dirname "$(readlink --canonicalize --no-newline "$0")")
+#shellcheck source="./../common/common_bash_libs"
 source "$script_dir/../common/common_bash_libs"
 
 # Check that cloudshell bootstrap has been done
@@ -79,7 +79,7 @@ set_python_environment() {
   info "Installing and registering dependencies..."
   pip install flask
   pip freeze > requirements.txt
-  cp "$WORKDIR/assets/module1/main.py" "$WORKDIR/myfirstapp/src" || { error "Failed to copy main.py to $WORKDIR/myfirstapp/src. Exiting"; exit 1; }
+  cp "$WORKDIR/assets/module1/app.py" "$WORKDIR/myfirstapp/src" || { error "Failed to copy main.py to $WORKDIR/myfirstapp/src. Exiting"; exit 1; }
   popd || exit 1
 }
 
