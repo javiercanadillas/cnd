@@ -32,7 +32,19 @@ If you open it, I recommend you to install several useful plugins for Cloud Pyth
 
 OK, you have the Google Cloud SDK installed in your computer. Now what? It's time to learn how to se up your local vscode so you get Cloud Shell Terminal and Cloud Shell files into it in an integrated way.
 
-Open a terminal in your laptop and type the following command:
+The first thing you need to do is to authenticate from your loca Google Cloud SDK using your GCP credentials. You do this by using `gcloud auth`:
+```bash
+gcloud auth
+```
+
+This will open a browser page and will ask you to use your GCP username and password. **Important**: if you're doing this from Qwiklabs, before running `gcloud auth` first open an incognito window and the run the command. This way, the request to enter the credentials will open in the incognito window instead of any other browser or browser profile you may have open.
+
+Once authenticated, select the project you'll be working with using `gcloud`:
+```bash
+gcloud config set project <your-project-id>
+```
+
+Now, you're ready to start configuring the remote access itself. Open a terminal in your laptop and type the following command:
 
 ```bash
 gcloud cloud shell ssh --dry-run --authorize-session
@@ -40,15 +52,40 @@ gcloud cloud shell ssh --dry-run --authorize-session
 
 This outputs the command that `gcloud` would use if you were to connect through SSH from your local terminal to Cloud Shell, but does not actually establishes the connection. This allows you to see the Cloud Shell VM IP, that you will need to use to connect to it from vscode.
 
-So, from the command output, copy and paste the VM IP that's there. You will use it when connecting from vscode.
+The output will look like this:
+```bash
+Pushing your public key to Cloud Shell...done.                                                                                                             
+Starting your Cloud Shell machine...
+Waiting for your Cloud Shell machine to start...done.                                                                                                      
+/usr/local/bin/ssh -t -p 6000 -i /Users/javiercm/.ssh/google_compute_engine -o StrictHostKeyChecking=no student_04_937de7a5d015@34.78.115.74 -- DEVSHELL_PROJECT_ID=qwiklabs-gcp-04-79b33b3599d5 'bash -l'
+```
+
+So, from the command output, copy and paste the VM IP that's there (in this example, it is **`34.78.115.74`** but yours will be different). You will use it when connecting from vscode.
 
 Open VScode, press `Cmd + Shift + P` (or `Ctrl + Shift + P` if you're in Windows or Linux), and type/select "Remote-SSH: Connect to Host..." in the window that appears there:
 
-![Connect to host](https://miro.medium.com/v2/resize:fit:1400/0*tQFfJwZLBOzCggGI)
+![Connect to host](./Remote_Connect_to_host.png)
 
-You will next be asked to add a host entry to the config file with the IP address and user account as the only details that are specific to you. This file is saved as config in the ~/.ssh folder if you're using a Linux or Mac computer.
+Then, type `Configure ssh hosts...` in the box that appears:
 
-![ssh config file](https://miro.medium.com/v2/resize:fit:1400/0*buPytl9Prsd9U__w)
+![Configure ssh host](./Configure_ssh_host.png)
+
+and then, select the SSH configuration file to update (VSCode should offer you the default one that makes most sense for your OS):
+
+![Select ssh configuration file](./Select_ssh_file.png)
+
+The corresponding ssh config file will open (this file is typically located in the ~/.ssh folder if you're using a Linux or Mac computer). At the end of that file, add the following lines:
+
+```text
+Host myremote
+  HostName 34.78.115.74
+  Port 6000
+  ForwardAgent yes
+  User student_04_937de7a5d015
+  IdentityFile ~/.ssh/google_compute_engine
+```
+
+Make sure the `HostName` and `User` directives match the information from your GCP user id and Cloud Shell VM IP.
 
 Now, you should be able to connect to Cloud Shell. Use `Cmd +  Shift + P` (or `Ctrl + Shift + P`) again in VSCode and type/select the option "Remote-SSH: Connect to Host..."
 
