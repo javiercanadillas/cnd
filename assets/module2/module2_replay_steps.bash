@@ -11,20 +11,9 @@ source "$script_dir/../common/common_bash_libs"
 #shellcheck disable=SC1091
 source "$HOME/.labenv_custom.bash"
 
-# Check that cloudshell bootstrap has been done
-check_cloudshell_bootstrap() {
-  [[ -f "$HOME/.config/cnd/.cloudshell_bootstrap.done" ]] || {
-    info "Bootstrapping basic Cloud Shell configuration..."
-    "$script_dir/../common/cloudshell_bootstrap.bash"
-  }
-}
-
 # Check that module1 steps replay has been done
-check_module1_bootstrap() {
-  [[ -f "$HOME/.config/cnd/.module1_steps.done" ]] || { 
-    info "Replaying Module 1 steps..."
-    "$script_dir/../module1/module1_replay_steps.bash"
-  }
+check_module1_replay_steps() {
+  [[ -f "$HOME/.config/cnd/.module1_replay_steps.done" ]] || { error "Module 1 steps replay has not been properly registered as executed. Aborting." && exit 1; }
 }
 
 ## Copy the Docker assets to the app dir
@@ -73,9 +62,9 @@ wrap_up() {
 }
 
 main() {
+  info "Replaying Module 1 steps..."
+  ../module1/check_module1_replay_steps
   info "Replaying Module 2 steps..."
-  check_cloudshell_bootstrap
-  check_module1_bootstrap
   set_docker_assets_and_deps
   create_gcp_services
   deploy_to_cloudrun
