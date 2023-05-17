@@ -60,6 +60,7 @@ RUN pip install \
   --disable-pip-version-check \
   --root-user-action=ignore \
   -r requirements.txt
+RUN pip install gunicorn
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
@@ -69,14 +70,7 @@ RUN pip install \
 CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
 ```
 
-As you'll be using Gunicorn, you'll also need to install it as a dependency. Come back to the terminal and type:
-
-```bash
-cd $WORKDIR/myfirstapp
-source .venv/bin/activate
-pip install gunicorn
-pip freeze > requirements.txt
-deactivate
+As you'll be using Gunicorn, you'll also need the dependency, but instead of adding it to your requirements file, it's something that's explicitly set in the Dockerfile.
 ```
 
 **Discussion: what's a container image? What's a Dockerfile useful for?**
