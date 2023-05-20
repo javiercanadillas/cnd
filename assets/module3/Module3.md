@@ -13,19 +13,25 @@ gcloud services enable sqladmin.googleapis.com
 ```
 
 Then, set the SQL database connection variables that the next steps will be using and persist them into a file:
+
 ```bash
-cat << EOF >> .labenv_db
-DB_INSTANCE=myinstance
-DB_NAME=mydatabase
-DB_USER=postgres
-DB_PASS=postgres
-INSTANCE_CONNECTION_NAME="$PROJECT_ID:$REGION:$DB_INSTANCE"
-export DB_INSTANCE DB_NAME DB_USER DB_PASS INSTANCE_CONNECTION_NAME
-EOF
+cd $HOME/cnd/
+cat ./assets/module3/labeven_extra >> .labenv_db
+```
+
+It's a good idea to have a look at what you've added to your shell to understand what you're doing before applying the changes:
+```bash
+bat .labenv_db
+```
+
+Notice how you're setting the variables to create and establish the database connection. You'll be using these variables in the next steps.
+
+Now, make the changes effective:
+```bash
 source ./.labenv_db
 ```
 
-Create a new Cloud SQL - PostgreSQL database instance using `gcloud`:
+Create a new Cloud SQL - PostgreSQL database instance using `gcloud` and selecting the `db-g1-small` machine type to reduce costs:
 ```bash
 gcloud sql instances create "$DB_INSTANCE" \
   --tier=db-g1-small \
