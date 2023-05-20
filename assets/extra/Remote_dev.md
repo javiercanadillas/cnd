@@ -21,7 +21,7 @@ If you happen to be on Mac OSX, using Homebrew is just one liner:
 brew install visual-studio-code
 ```
 
-If you open it, I recommend you to install several useful plugins for Cloud Python development:
+Just as an example of some customization to your local VSCode, if you're doing Python development in the Cloud I'd recommend you to install several useful plugins from the VSCode Marketplace:
 
 - Docker (from Microsoft)
 - Python (from Microsoft)
@@ -87,6 +87,6 @@ Host myremote
 
 Make sure the `HostName` and `User` directives match the information from your GCP user id and Cloud Shell VM IP.
 
-Now, you should be able to connect to Cloud Shell. Use `Cmd +  Shift + P` (or `Ctrl + Shift + P`) again in VSCode and type/select the option "Remote-SSH: Connect to Host..."
+Now, you should be able to connect to Cloud Shell. Use `Cmd +  Shift + P` (or `Ctrl + Shift + P`) again in VSCode and type/select the option "Remote-SSH: Connect to Host...". It will show you a list of hosts to connect to, and you should see the one you just added, that's called `myremote` in this example.
 
-VSCode should open a new window, and in that window whatever you're doing, you're doing in the Remote Cloud Shell (both opening files and opening terminals will happen remotely in Cloud Shell).
+Select it and VSCode should open a new window. In that new window you're now in whatever you're doing, you're doing in the Remote Cloud Shell (both opening files and opening terminals will happen remotely in Cloud Shell).
