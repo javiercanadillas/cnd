@@ -66,6 +66,8 @@ wrap_up() {
 main() {
   info "Replaying Module 1 steps..."
   check_module1_replay_steps
+  #shellcheck disable=SC1091
+  source "$HOME/.bashrc"
   info "Replaying Module 2 steps..."
   set_docker_assets_and_deps
   create_gcp_services

@@ -8,20 +8,21 @@ If you have just finished Module 1 without stopping your Qwiklabs lab, there's n
 
 However, **if you're starting fresh from a new Qwiklabs lab** because you did Module 1 some day in the past, you need to do the following steps to automatically replay the steps done in Module 1.
 
-1. Open a new [Google Cloud Shell](shell.cloud.google.com) in your Qwiklabs project. Set up your project and preferred region:
+1. Open a new [Google Cloud Console](console.cloud.google.com) tab in your browser and log in with your Qwiklabs credentials. Accept the terms and activate the Qwiklabs project.
+2. Open a new [Google Cloud Shell](shell.cloud.google.com) in your Qwiklabs project. Set up your project and preferred region:
   ```bash
   gcloud config set project <your-qwiklabs-project-id>
   gcloud config set compute/region <your-preferred-cloud-region>
   ```
-2. Clone this repo
+3. Clone this repo
   ```bash
   git clone https://github.com/javiercanadillas/cnd.git
   ```
-3. Run Module 1 steps replay script:
+4. Run Module 1 steps replay script:
   ```bash
   cd "$HOME/cnd/assets/module1" && ./module1_replay_steps.bash
   ``` 
-4. As requested in the output of the previous script, source your `.bashrc` file
+5. As requested in the output of the previous script, source your `.bashrc` file
   ```bash
   source "$HOME/.bashrc"
   ```
