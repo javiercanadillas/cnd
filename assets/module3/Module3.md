@@ -4,6 +4,36 @@ Connecting to databases is one of the most common operations to be done when dev
 
 In this mode, you'll learn how to connect to one of the most common types of Databases in real life companies.
 
+## Bootstrapping this module
+
+This module builds on the work done in [Module 2](../module1/Module2.md).
+
+If you have just finished Module 2 without stopping your Qwiklabs lab, there's nothing additional for you to do in this section and you should continue to [Creating a Cloud SQL Postgre Database](creating-a-cloud-sql-postgre-database) section below.
+
+However, **if you're starting fresh from a new Qwiklabs lab** because you did Module 2 some day in the past, you need to do the following steps to automatically replay the steps done in Module 2.
+
+1. Open a new [Google Cloud Shell](shell.cloud.google.com) in your Qwiklabs project. Set up your project and preferred region:
+  ```bash
+  gcloud config set project <your-qwiklabs-project-id>
+  gcloud config set compute/region <your-preferred-cloud-region>
+  ```
+2. Clone this repo
+  ```bash
+  git clone https://github.com/javiercanadillas/cnd.git
+  ```
+3. Run Module 2 steps replay script:
+  ```bash
+  cd "$HOME/cnd/assets/module2" && ./module2_replay_steps.bash
+  ``` 
+4. As requested in the output of the previous script, source your `.bashrc` file
+  ```bash
+  source "$HOME/.bashrc"
+  ```
+
+It will also be necessary that you open the console in [console.cloud.google.com](https://console.cloud.google.com), accept the terms, activate the Qwiklabs project and from there enable Cloud Shell and the Cloud Shell editor.
+
+Once all this has been done, you should be ready to continue with Module 2. Read on.
+
 ## Creating a Cloud SQL Postgre Database
 
 ### Creating the infrastructure
