@@ -13,7 +13,7 @@ source "$HOME/.labenv_custom.bash"
 
 # Check that module1 steps replay has been done
 check_module1_replay_steps() {
-  [[ -f "$HOME/.config/cnd/.module1_replay_steps.done" ]] || { ../module1/module1_replay_steps; }
+  [[ -f "$HOME/.config/cnd/.module1_replay_steps.done" ]] || { "./$script_dir/../module1/module1_replay_steps"; }
 }
 
 ## Copy the Docker assets to the app dir
