@@ -64,6 +64,7 @@ wrap_up() {
 }
 
 main() {
+  check_basic_requirements
   info "Replaying Module 1 steps..."
   check_module1_replay_steps
   info "Replaying Module 2 steps..."

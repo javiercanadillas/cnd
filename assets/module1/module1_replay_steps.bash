@@ -94,6 +94,7 @@ wrap_up() {
 }
 
 main() {
+  check_basic_requirements
   info "Bootstrapping basic Cloud Shell configuration..."
   "$script_dir/../common/cloudshell_bootstrap.bash"
   check_cloudshell_bootstrap
