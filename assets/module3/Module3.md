@@ -15,7 +15,7 @@ gcloud services enable sqladmin.googleapis.com
 Then, set the SQL database connection variables that the next steps will be using and persist them into a file:
 
 ```bash
-cd $HOME/cnd/
+cd $HOME/cnd/db-api
 cat ./assets/module3/labeven_extra >> .labenv_db
 ```
 
@@ -41,7 +41,7 @@ gcloud sql instances create "$DB_INSTANCE" \
 
 Store the instance IP address in an environment variable and persist it into the environment file that you created before:
 ```bash
-echo "export SQL_IP="$(gcloud sql instances describe "$DB_INSTANCE" --format="value(ipAddresses[0].ipAddress)")"" >> .labenv_db
+echo "declare -x SQL_IP="$(gcloud sql instances describe "$DB_INSTANCE" --format="value(ipAddresses[0].ipAddress)")"" >> .labenv_db
 source ./.labenv_db
 ```
 
@@ -93,7 +93,13 @@ python create_db.py
 
 Observe how a new table is created in the database and the entries are logged back by the program to your console.
 
+You can always test the database connection with another Python program:
+```bash
+python $HOME/cnd/assets/module3/test_db.py
+```
+
+If you do so, you should see one entry in the database.
+
 This works as is from Cloud Shell without requiring further authentication configuration in the code because the code is using Google Cloud SDK's [Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc).
 
 ## Create a Cloud Run Flask-based API
-
