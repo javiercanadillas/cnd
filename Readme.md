@@ -35,5 +35,5 @@ The following modules will walk you through the concepts you'll be practicing wi
 
 - [Module 1 - Getting started with Python development for Cloud](./assets/module1/Module1.md)
 - [Module 2 - Packaging into a container image and deploying into Cloud Run](./assets/module2/Module2.md)
-- [Module 3 - Extra Qwkilab](./assets/module3/Module3.md)
+- [Module 3 - Connecting to Cloud SQL from Cloud Run](./assets/module3/Module3.md)
 - [Extra - Developing using VSCode Remote Server against Cloud Shell](./assets/extra/Remote_dev.md)
