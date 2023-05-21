@@ -38,9 +38,9 @@ create_gcp_services() {
   #shellcheck disable=SC2153
   # Variable should be comming from the environment, checked with cloudshell_bootstrap.bash
   gcloud artifacts repositories create docker-main \
-    --location="$REGION" \
+    --location="$region" \
     --repository-format=docker \
-    --quiet 2>/dev/null
+    --quiet
 }
 
 ## Deploy the app to Cloud Run
@@ -49,7 +49,7 @@ deploy_to_cloudrun() {
   gcloud run deploy myfirstapp \
   --source . --allow-unauthenticated \
   --set-env-vars="NAME=CND" \
-  --quiet 2>/dev/null
+  --quiet
   popd || exit 1
 }
 
@@ -66,8 +66,6 @@ wrap_up() {
 main() {
   info "Replaying Module 1 steps..."
   check_module1_replay_steps
-  #shellcheck disable=SC1091
-  source "$HOME/.bashrc"
   info "Replaying Module 2 steps..."
   set_docker_assets_and_deps
   create_gcp_services
