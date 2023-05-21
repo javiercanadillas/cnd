@@ -13,7 +13,7 @@ source "$HOME/.labenv_custom.bash"
 
 # Check that module1 steps replay has been done
 check_module1_replay_steps() {
-  [[ -f "$HOME/.config/cnd/.module1_replay_steps.done" ]] || { error "Module 1 steps replay has not been properly registered as executed. Aborting." && exit 1; }
+  [[ -f "$HOME/.config/cnd/.module1_replay_steps.done" ]] || { ../module1/module1_replay_steps; }
 }
 
 ## Copy the Docker assets to the app dir
@@ -63,7 +63,7 @@ wrap_up() {
 
 main() {
   info "Replaying Module 1 steps..."
-  ../module1/check_module1_replay_steps
+  check_module1_replay_steps
   info "Replaying Module 2 steps..."
   set_docker_assets_and_deps
   create_gcp_services
