@@ -101,7 +101,7 @@ README.md
 
 Build your image tagging using Docker. Tag it with the proper Artifact Registry ID (it should follow the convention `LOCATION-docker.pkg.dev/PROJECT-ID/REPOSITORY/IMAGE`):
 ```bash
-docker build -t "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" .
+docker build -t "$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp" .
 ```
 
 **Discussion: what's the meaning of the -t option used above?**
@@ -125,7 +125,7 @@ sudo cat /var/lib/docker/image/overlay2/imagedb/content/sha256/$IMAGE_SHA | jq
 
 Run the container locally:
 ```bash
-docker run -e PORT=8080 -p 8080:8080 $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
+docker run -e PORT=8080 -p 8080:8080 $REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp
 ```
 
 Inspect that the application is running correctly and once done, press `Ctrl+C` to stop the container.
@@ -147,14 +147,14 @@ gcloud artifacts repositories list
 For the docker daemon to be able to push images to a remote registry, you'll need to authenticate and authorize. This means configuring Docker so it has the right credentials to push images to the Artifact Registry docker registry that you created in the steps above:
 ```bash
 gcloud auth configure-docker $REGION-docker.pkg.dev
-docker push $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
+docker push $REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp
 ```
 
 When asked, answer yes.
 
 List the images in the remote repository and check that your image is there:
 ```bash
-gcloud artifacts docker images list $REGION-docker.pkg.dev/$PROJECT_ID/docker-main
+gcloud artifacts docker images list $REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy
 ```
 
 ### Image tags and image digests
@@ -180,12 +180,12 @@ Let's pull all the information from the published image using the Docker v2 REST
 ```bash
 # Gets the image digest from the Artifact Registry repository
 IMAGE_DIGEST="$(gcloud artifacts docker images describe \
-    $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp:latest \
+    $REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp:latest \
     --format 'value(image_summary.digest)')"
 # Gets a list of tags for the image
-curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" https://$REGION-docker.pkg.dev/v2/$PROJECT_ID/docker-main/myfirstapp/tags/list
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" https://$REGION-docker.pkg.dev/v2/$PROJECT_ID/cloud-run-source-deploy/myfirstapp/tags/list
 # Gets the image manifest
-curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" https://$REGION-docker.pkg.dev/v2/$PROJECT_ID/docker-main/myfirstapp/manifests/$IMAGE_DIGEST | less
+curl -s -H "Authorization: Bearer $(gcloud auth print-access-token)" https://$REGION-docker.pkg.dev/v2/$PROJECT_ID/cloud-run-source-deploy/myfirstapp/manifests/$IMAGE_DIGEST | less
 ```
 
 What's important from all this is that to deploy container images in a reliable way (a software delivery pipeline, actually) it is best to rely on image digests instead of image tags. You'll be working however with both indistinctively during these modules as not not overcomplicate your practice.
@@ -198,7 +198,7 @@ Finally, use the Google Cloud SDK to tell Cloud Run to fetch the image from the 
 gcloud services enable run.googleapis.com
 # And then deploy the app
 gcloud run deploy myfirstapp \
-  --image "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" \
+  --image "$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp" \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
 ```
@@ -217,7 +217,7 @@ You'll now rebuild the container image from the Dockerfile specification using t
 
 ```bash
 cd $WORKDIR
-gcloud builds submit -t $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp .
+gcloud builds submit -t $REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp .
 ```
 
 Note how here, instead of creating an image locally and uploading it to Artifact Registry, Cloud Build is zipping the source code and uploading it to the Cloud. Cloud Build will get it in a Google Cloud Storage bucket and will proceed to build an image from it.
@@ -225,7 +225,7 @@ Note how here, instead of creating an image locally and uploading it to Artifact
 You can now deploy this image version using `gcloud`:
 ```bash
 gcloud run deploy myfirstapp \
-  --image "$REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp" \
+  --image "$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp" \
   --allow-unauthenticated \
   --set-env-vars="NAME=CND"
 ```
@@ -266,7 +266,7 @@ spec:
       containerConcurrency: 80
       timeoutSeconds: 300
       containers:
-      - image: $REGION-docker.pkg.dev/$PROJECT_ID/docker-main/myfirstapp
+      - image: $REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/myfirstapp
         ports:
         - name: http1
           containerPort: 8080

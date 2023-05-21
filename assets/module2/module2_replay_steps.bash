@@ -37,7 +37,7 @@ create_gcp_services() {
     --quiet 2>/dev/null
   #shellcheck disable=SC2153
   # Variable should be comming from the environment, checked with cloudshell_bootstrap.bash
-  gcloud artifacts repositories create docker-main \
+  gcloud artifacts repositories create cloud-run-source-deploy \
     --location="$region" \
     --repository-format=docker \
     --quiet

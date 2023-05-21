@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: myfirstapp
   labels:
-    cloud.googleapis.com/location: REGION
+    cloud.googleapis.com/location: $REGION
 spec:
   template:
     spec:
