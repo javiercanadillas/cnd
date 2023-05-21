@@ -3,7 +3,10 @@
 Connecting to databases is one of the most common operations to be done when developing Cloud Nativa applications. This is like so because serverless platforms like Cloud Run rely on them to persist data due to the very stateless nature of these platforms.
 
 In this mode, you'll learn how to connect to one of the most common types of Databases in real life companies.
-## Create a Cloud SQL Postgre Database
+
+## Creating a Cloud SQL Postgre Database
+
+### Creating the infrastructure
 
 The first thing to do is to create the necessary Cloud Infrastructure, starting with the Cloud SQL Postgre instance and database. Cloud SQL offers you some other options (MySQL and SQLServer), but PosgreSQL seems to be an option that's widely used nowadays.
 
@@ -59,8 +62,8 @@ gcloud sql databases create $DB_NAME --instance=$DB_INSTANCE
 ```
 
 You now have all the infrastructure you need.
-## Create the application
 
+### Creating the database
 You'll now create a new structure for a new Cloud Run service that you will be developing. This new service will be called `db-api`, and will wrap our application specific database operations through an API built with Flask.
 
 Create a new folder structure for your code, and a new python environment inside it:
@@ -75,31 +78,98 @@ Note how you enabled the virtual environment, so any Python package management i
 
 You will now uuse `pip-tools` for a saner dependency management:
 ```bash
+cd @HOME/cnd/db-api
 pip install pip-tools
 cp $HOME/cnd/assets/module3/requirements-local.in ./requirements-local.in
-pip-compile ./requirements-local.in -o requirements.txt
-pip-sync
+pip-compile ./requirements-local.in
+pip-sync requirements-local.txt
 ```
 
 This just took a simple `requirements-local.in` requirements file that only has the two required dependencies for now, defined in an explicit way, and generates a `requirements.txt` file with all the subdependencies, adding comments to track which dependencies are coming from which. The last `pip-sync` is just making sure that the `requirements.txt` file is processed by pip and that everything is consistent.
 
 
-Copy the `create_db.py` code file and run it. This file contains code to create a table with data into the database you created previously.
+You'll now use a Python program called `create_db.py` to create the database structure. This file contains code to create a table with data into the database you created previously that's ready for the API you're about to develop and deploy.
+
 ```bash
-cd src/
-cp $HOME/cnd/assets/module3/create_db.py .
+cd $HOME/cnd/assets/module3
 python create_db.py
 ```
 
-Observe how a new table is created in the database and the entries are logged back by the program to your console.
+Observe how a new table is created in the database and the entries are logged back by the program to your console. **It's a good idea to have a look at the code to understand what it's doing.**
 
-You can always test the database connection with another Python program:
+You can also test the database connection with another Python program called `test_db.py` at any time during this module:
 ```bash
-python $HOME/cnd/assets/module3/test_db.py
+cd $HOME/cnd/assets/module3
+python test_db.py
 ```
 
-If you do so, you should see one entry in the database.
+If you do so now just after creating the database table, you should see one entry in the database.
 
-This works as is from Cloud Shell without requiring further authentication configuration in the code because the code is using Google Cloud SDK's [Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc).
+This all works as is from Cloud Shell without requiring further authentication configuration in the code because the code is using Google Cloud SDK's [Application Default Credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc).
+
+## Creating the application
+
+You'll now move to the `src` folder and create a new Flask application that will wrap a couple of database operations in a simple API.
+
+```bas
+cd $HOME/cnd/db-api/src
+```
+
+From there, you'll copy the relevant files from the assets folder:
+```bash
+cp $HOME/cnd/assets/module3/{connect_connector.py,app.py,base_logger.py} .
+```
+
+You'll also copy the application frontend files that you'll be using later, they're Flask templates:
+```bash
+cp -r $HOME/cnd/assets/module3/templates .
+```
+
+Explore the the source code that you just copied to understand how the application is structured. You'll see that the `app.py` file contains the Flask application, and that it's using the `connect_connector.py` file to connect to the database and perform the operations. The `base_logger.py` file is just a helper to log messages to the console. The `templates` folder contains the frontend files that allow you to vote for TABS or SPACES, submits a POST request to the API and queries the API with a GET request to show the results.
+
+### Running the application locally
+
+You'll now run the application locally to test it. You'll need to set the environment variables that the application will be using to connect to the database. You'll do so by sourcing the `.labenv_db` file that you created before if you haven't done it already:
+```bash
+source $HOME/cnd/db-api/.labenv_db
+```
+
+Then, run the application:
+```bash
+cd $HOME/cnd/db-api/src
+python app.py
+```
+
+You should see the application outputting the URL where it's running, and also some logs in the console. Open that URL in a new tab in your browser and you should see the frontend of the application. You can vote for TABS or SPACES and see the results.
 
 ## Create a Cloud Run Flask-based API
+
+You'll now create a new Cloud Run service to be able to deploy your app in the cloud.
+
+First, copy the Dockerfile and the requirements file from the assets folder:
+```bash
+cp $HOME/cnd/assets/module3/{Dockerfile,requirements.in} .
+```
+
+Then, from the `requirements.in` file, generate the `requirements.txt` file that will be used by the Dockerfile for the production service:
+```bash
+pip-compile requirements.in
+```
+
+You can now build the container, push it to Artifact Registry and deploy it to Cloud Run in one single step:
+```bash
+cd $HOME/cnd/db-api
+gcloud run deploy db-api \
+  --source . \
+  --platform managed \
+  --region $REGION \
+  --allow-unauthenticated \
+  --set-env-vars=INSTANCE_CONNECTION_NAME="$PROJECT_ID:$REGION:$DB_INSTANCE" \
+  --set-env-vars=DB_NAME="$DB_NAME" \
+  --set-env-vars=DB_USER="$DB_USER" \
+  --set-env-vars=DB_PASS="$DB_PASS"
+```
+
+There are several problems with the way you're deploying this. To start with, the application has a UI that's not decoupled from the component performing database operations, and that has forced you to deploy the application without authentication. Also, the application is managing connection secrets to the database using environment variables in the clear, which is far from ideal.
+
+You'll fix the first issue by creating a new service that will act as a proxy to the database, and that will be the only component that will be allowed to connect to the database. The application will then connect to this new service instead of connecting directly to the database. Once that is fixed, you'll fix the second issue by using Secret Manager to store the database credentials. You'll see all that in the next module.
