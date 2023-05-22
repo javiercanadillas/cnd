@@ -172,6 +172,11 @@ python app.py
 
 You should see the application outputting the URL where it's running, and also some logs in the console. Open that URL in a new tab in your browser and you should see the frontend of the application. You can vote for TABS or SPACES and see the results.
 
+You can also test the API directly with `curl`, opening a new tab in Cloud Shell and running the following command:
+```bash
+curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d 'team=TABS' localhost:8080/votes
+```
+
 ## Create a Cloud Run Flask-based API
 
 You'll now create a new Cloud Run service to be able to deploy your app in the cloud.
