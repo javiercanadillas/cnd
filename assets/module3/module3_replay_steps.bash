@@ -17,7 +17,7 @@ app_dir="$script_dir/../../$app_name"
 check_module_replay_steps() {
   local -r module_name="$1"; shift
   [[ -f "$HOME/.config/cnd/.${module_name}_replay_steps.done" ]] || {
-    "$script_dir/../${module_name}/${module_name}_replay_steps.bash"
+    no_warn=1 "$script_dir/../${module_name}/${module_name}_replay_steps.bash"
   }
 }
 
