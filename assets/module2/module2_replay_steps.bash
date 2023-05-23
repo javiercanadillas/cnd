@@ -14,7 +14,7 @@ source "$HOME/.labenv_custom.bash"
 # Check that module1 steps replay has been done
 check_module1_replay_steps() {
   [[ -f "$HOME/.config/cnd/.module1_replay_steps.done" ]] || {
-    "$script_dir/../module1/module1_replay_steps.bash"
+    no_warn=1 "$script_dir/../module1/module1_replay_steps.bash"
   }
 }
 
@@ -58,9 +58,11 @@ wrap_up() {
   local -r registry_dir="$HOME/.config/cnd"
   mkdir -p "$registry_dir"
   touch "$registry_dir/.module2_replay_steps.done"
-  printfx "--------------------------------------------------------"
-  warning "You must run \"source \$HOME/.bashrc\" before continuing"
-  printfx "--------------------------------------------------------"
+  [[ $no_warn ]] || {
+    printfx "--------------------------------------------------------"
+    warning "You must run \"source \$HOME/.bashrc\" before continuing"
+    printfx "--------------------------------------------------------"
+  }
 }
 
 main() {

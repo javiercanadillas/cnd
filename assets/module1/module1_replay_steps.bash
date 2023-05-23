@@ -88,9 +88,11 @@ wrap_up() {
   local -r registry_dir="$HOME/.config/cnd"
   mkdir -p "$registry_dir"
   touch "$registry_dir/.module1_replay_steps.done"
-  printfx "--------------------------------------------------------"
-  warning "You must run \"source \$HOME/.bashrc\" before continuing"
-  printfx "--------------------------------------------------------"
+  [[ $no_warn ]] || {
+    printfx "--------------------------------------------------------"
+    warning "You must run \"source \$HOME/.bashrc\" before continuing"
+    printfx "--------------------------------------------------------"
+  }
 }
 
 main() {

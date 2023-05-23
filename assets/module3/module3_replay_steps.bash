@@ -84,7 +84,8 @@ deploy_to_cloudrun() {
   --set-env-vars=INSTANCE_CONNECTION_NAME="$PROJECT_ID:$REGION:$DB_INSTANCE" \
   --set-env-vars=DB_NAME="$DB_NAME" \
   --set-env-vars=DB_USER="$DB_USER" \
-  --set-env-vars=DB_PASS="$DB_PASS"
+  --set-env-vars=DB_PASS="$DB_PASS" \
+  --async
   popd || exit 1
 }
 
@@ -93,6 +94,7 @@ wrap_up() {
   local -r registry_dir="$HOME/.config/cnd"
   mkdir -p "$registry_dir"
   touch "$registry_dir/.module3_replay_steps.done"
+  [[ $warn ]] && return 0
   printfx "--------------------------------------------------------"
   warning "You must run \"source \$HOME/.bashrc\" before continuing"
   printfx "--------------------------------------------------------"
@@ -108,7 +110,7 @@ main() {
   copy_assets_and_deps
   create_gcp_services
   deploy_to_cloudrun
-  wrap_up
+  wrap_up false
 }
 
 main "$@"
