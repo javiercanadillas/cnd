@@ -61,7 +61,9 @@ with pool.connect() as db_conn:
     insert_stmt = sqlalchemy.text(
         "INSERT INTO votes (time_cast, candidate) VALUES (:time_cast, :candidate)",
     )
-    db_conn.execute(insert_stmt)
+    db_conn.execute(insert_stmt, parameters={
+          "time_cast": time_cast,
+          "candidate": "TABS"})
 
     db_conn.commit()
 

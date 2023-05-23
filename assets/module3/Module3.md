@@ -48,8 +48,9 @@ gcloud services enable sqladmin.googleapis.com
 Then, set the SQL database connection variables that the next steps will be using and persist them into a file:
 
 ```bash
+mkdir -p $HOME/cnd/db-api/src
 cd $HOME/cnd/db-api
-cat ./assets/module3/labeven_extra >> .labenv_db
+cat ../assets/module3/labven_extra >> .labenv_db
 ```
 
 It's a good idea to have a look at what you've added to your shell to understand what you're doing before applying the changes:
@@ -74,7 +75,9 @@ gcloud sql instances create "$DB_INSTANCE" \
 
 Store the instance IP address in an environment variable and persist it into the environment file that you created before:
 ```bash
-echo "declare -x SQL_IP="$(gcloud sql instances describe "$DB_INSTANCE" --format="value(ipAddresses[0].ipAddress)")"" >> .labenv_db
+echo "
+declare -x SQL_IP="$(gcloud sql instances describe "$DB_INSTANCE" --format="value(ipAddresses[0].ipAddress)")"
+" >> .labenv_db
 source ./.labenv_db
 ```
 
@@ -98,7 +101,6 @@ You'll now create a new structure for a new Cloud Run service that you will be d
 
 Create a new folder structure for your code, and a new python environment inside it:
 ```bash
-mkdir -p $HOME/cnd/db-api/src
 cd $HOME/cnd/db-api
 python -m venv .venv
 source .venv/bin/activate
@@ -108,7 +110,7 @@ Note how you enabled the virtual environment, so any Python package management i
 
 You will now uuse `pip-tools` for a saner dependency management:
 ```bash
-cd @HOME/cnd/db-api
+cd $HOME/cnd/db-api
 pip install pip-tools
 cp $HOME/cnd/assets/module3/requirements-local.in ./requirements-local.in
 pip-compile ./requirements-local.in
