@@ -119,7 +119,6 @@ pip-sync requirements-local.txt
 
 This just took a simple `requirements-local.in` requirements file that only has the two required dependencies for now, defined in an explicit way, and generates a `requirements.txt` file with all the subdependencies, adding comments to track which dependencies are coming from which. The last `pip-sync` is just making sure that the `requirements.txt` file is processed by pip and that everything is consistent.
 
-
 You'll now use a Python program called `create_db.py` to create the database structure. This file contains code to create a table with data into the database you created previously that's ready for the API you're about to develop and deploy.
 
 ```bash
