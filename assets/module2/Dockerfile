@@ -15,7 +15,6 @@ COPY requirements.txt ./
 RUN pip install \
   --no-cache-dir \
   --disable-pip-version-check \
-  --root-user-action=ignore \
   -r requirements.txt
 RUN pip install gunicorn
 
