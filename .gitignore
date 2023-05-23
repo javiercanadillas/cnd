@@ -3,5 +3,6 @@ myfirstapp*/
 db-api*/
 front*/
 back*/
+**/__pycache__
 **/.DS_Store
 **/.vscode
