@@ -1,8 +1,9 @@
 *_template.md
-myfirstapp*/
-db-api*/
-front*/
-back*/
+myfirstapp/
+db-api/
+front/
+back/
+!assets/**
 **/__pycache__
 **/.DS_Store
 **/.vscode
