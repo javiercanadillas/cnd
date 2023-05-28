@@ -32,7 +32,7 @@ copy_assets_and_deps() {
   info "Copying code assets and basic app dependencies..."
   local -r cp_source="$script_dir"
   # Copy the labenv_extra file
-  cp -- "$cp_source/labenv_extra" "$app_dir/.labenv_db"
+  cp -- "$cp_source/.labenv_db" "$app_dir/.labenv_db"
   source "$app_dir/.labenv_db"
   declare -a files_to_copy=(
     "Dockerfile"
@@ -51,14 +51,14 @@ copy_assets_and_deps() {
 
 ## Set GCP services
 create_gcp_services() {
-  info "Enabling necessary GCP APIs..."
+  info "Creating database..."
   gcloud services enable \
     sqladmin.googleapis.com \
     --quiet 2>/dev/null
   info "Creating database instance..."
   gcloud sql instances create "$DB_INSTANCE" \
     --database-version=POSTGRES_14 \
-    --tier=db1-g1-small \
+    --tier=db-g1-small \
     --region="$region" \
     --quiet
   info "Setting up database password..."

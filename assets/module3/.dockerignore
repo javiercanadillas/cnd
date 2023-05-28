@@ -1,5 +1,5 @@
 Dockerfile
-README.md
+*.md
 **/*.pyc
 **/*.pyo
 **/*.pyd
