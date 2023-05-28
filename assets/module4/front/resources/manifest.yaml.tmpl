@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: front
   labels:
-    cloud.googleapis.com/location: europe-west1
+    cloud.googleapis.com/location: $REGION
   annotations:
     run.googleapis.com/ingress: all
 spec:
@@ -11,7 +11,7 @@ spec:
     spec:
       containerConcurrency: 80
       timeoutSeconds: 300
-      serviceAccountName: front-sa@javiercm-testing3.iam.gserviceaccount.com
+      serviceAccountName: front-sa@$PROJECT_ID.iam.gserviceaccount.com
       containers:
       - image: front
         ports:
@@ -19,7 +19,7 @@ spec:
           containerPort: 8080
         env:
         - name: BACK_SERVICE_URL
-          value: https://back-giunrmdkzq-ew.a.run.app
+          value: $BACK_SERVICE_URL
         resources:
           limits:
             cpu: 1000m
