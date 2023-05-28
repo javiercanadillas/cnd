@@ -38,9 +38,9 @@ def render_index() -> str:
 
 @app.route("/votes", methods=["POST"])
 def cast_vote() -> Response:
-    logger.info("Received request to cast a vote")
-    team = request.form["team"]
-    return save_vote(db, team)
+    logger.info("Received vote from the frontend")
+    content = request.get_json()
+    return save_vote(db, content)
 
 
 # get_index_context gets data required for rendering HTML application
