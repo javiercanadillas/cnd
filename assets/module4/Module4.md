@@ -11,7 +11,37 @@ The `db-api` service will then be split into two different services:
 
 To control the security of the services with some degree of detail, you'll assign different identities to each service. Cloud identities destined to Cloud Run services are called _service accounts_, and you'll be creating two of them, one for each service.
 
-## Testing the `back` service locally
+## Bootstrapping this module
+
+This module builds on the work done in [Module 3](../module1/Module3.md).
+
+If you have just finished Module 3 without stopping your Qwiklabs lab, there's nothing additional for you to do in this section and you should continue to [Preparing the new backend service](preparing-the-new-backend-service) section below.
+
+However, **if you're starting fresh from a new Qwiklabs lab** because you did Module 3 some day in the past, you need to do the following steps to automatically replay the steps done in Module 3.
+
+1. Open a new [Google Cloud Console](console.cloud.google.com) tab in your browser and log in with your Qwiklabs credentials.
+   Accept the terms and activate the Qwiklabs project. 
+2. Open a new [Google Cloud Shell](shell.cloud.google.com) in your Qwiklabs project. Set up your project and preferred region:
+  ```bash
+  gcloud config set project <your-qwiklabs-project-id>
+  gcloud config set compute/region <your-preferred-cloud-region>
+  ```
+3. Clone this repo
+  ```bash
+  git clone https://github.com/javiercanadillas/cnd.git
+  ```
+4. Run Module 2 steps replay script (yes, Module 2, not Module 3):
+  ```bash
+  cd "$HOME/cnd/assets/module2" && ./module2_replay_steps.bash
+  ``` 
+5. As requested in the output of the previous script, source your `.bashrc` file
+  ```bash
+  source "$HOME/.bashrc"
+  ```
+
+Once all this has been done, you should be ready to continue with Module 4. Read on.
+
+## Preparing the new backend service
 
 The backend service is very similar to the `db-api` service you experienced with in [Module 3](../Module3.md). The difference is now that this service is a pure API with no frontend rendering that it's accepting JSON documents on two endpoints:
 
@@ -26,6 +56,8 @@ cd $HOME/cnd
 mkdir -p /back/src
 cp -r assets/module4/back/* /back
 ```
+
+### Testing the `back` service locally
 
 Source the proper environment variables to be able to run the service locally:
 ```bash
