@@ -32,7 +32,7 @@ However, **if you're starting fresh from a new Qwiklabs lab** because you did Mo
   source "$HOME/.bashrc"
   ```
 
-Once all this has been done, you should be ready to continue with Module 2. Read on.
+Once all this has been done, you should be ready to continue with Module 3. Read on.
 
 ## Creating a Cloud SQL Postgre Database
 
