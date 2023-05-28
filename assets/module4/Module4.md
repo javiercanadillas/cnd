@@ -53,19 +53,21 @@ Create the basic structure for the `back` service and copy the necessary files f
 
 ```bash
 cd $HOME/cnd
-mkdir -p /back/src
-cp -r assets/module4/back/* /back
+mkdir -p back/src
+cp -r assets/module4/back/. back/
 ```
 
 ### Testing the `back` service locally
 
 Source the proper environment variables to be able to run the service locally:
+
 ```bash
 cd back
 source .labenv_db
 ```
 
 Create a virtual environment and install the dependencies:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -73,12 +75,15 @@ pip install -r requirements-local.txt
 ```
 
 Launch the service locally:
+
 ```bash
 cd src
 python app.py
 ```
 
 Open a new terminal and test the `get_votes` endpoint:
+
+[Terminal 2]
 ```bash
 curl -v localhost:8080/get_votes
 ```
@@ -133,6 +138,8 @@ You should get a response similar to this one:
 ```
 
 In the other terminal, you should see the logs of the `back` service:
+
+[Terminal 1]
 ```text
 INFO - Getting environment variables
 INFO - Connection data:
@@ -161,11 +168,15 @@ INFO - 127.0.0.1 - - [27/May/2023 15:27:28] "GET /get_votes HTTP/1.1" 200 -
 ```
 
 Now, test the `cast_vote` endpoint creating a new vote for the `SPACES` team. To do so, you'll need to send a `POST` request with a JSON document containing the team name from the terminal you opened before to issue curl commands:
+
+[Terminal 2]
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{"team": "SPACES"}' localhost:8080/cast_vote
 ```
 
 You should see the response from the service:
+
+[Terminal 2]
 ```text
 {
   "message": "OK",
@@ -174,13 +185,15 @@ You should see the response from the service:
 ```
 
 If you go back to the terminal where the `back` service is running, you should see the logs of the service:
+
+[Terminal 1]
 ```text
 INFO - Receiving vote
 INFO - Vote successfully inserted into the database for team SPACES
 INFO - 127.0.0.1 - - [27/May/2023 15:45:56] "POST /cast_vote HTTP/1.1" 200 -
 ```
 
-You can now close the terminal you were using to run the `curl` commands, and press `CTRL+C` in the terminal where the `back` service is running to stop the service.
+You can now close the terminal you were using to run the `curl` commands (Terminal 2), and press `CTRL+C` in the terminal where the `back` service is running to stop the service.
 
 ## Preparing the Cloud environment to deploy the services (aka, securing the `back` service)
 
@@ -206,20 +219,11 @@ for service_name in "${service_list[@]}"; do
 done
 ```
 
-You also need to configure the receiving `back` service to accept requests from the `front` by making the calling service's service account a _principal_ on the receiving service. Then you grant the service account the Cloud Run Invoker (`roles/run.invoker`) role on the receiving service:
-
-```bash
-gcloud run services add-iam-policy-binding back \
-  --member=serviceAccount:front-sa@$PROJECT_ID.iam.gserviceaccount.com \
-  --role=roles/run.invoker \
-  --region $REGION
-```
-
 Finally, you need to grant the `back` service permissions to access the Cloud SQL database (`roles/cloudsql.client`), which means granting the `back-sa` service account the `roles/cloudsql.client` role on the project:
 
 ```bash
 gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member serviceAccount:back-sa@javiercm-testing3.iam.gserviceaccount.com \
+  --member serviceAccount:back-sa@$PROJECT_ID.iam.gserviceaccount.com \
   --role roles/cloudsql.client
 ```
 
@@ -237,9 +241,9 @@ To use Skaffold, you'll first include the environment variables values in the th
 
 ```bash
 cd $HOME/cnd/back
-envsubst < skaffold.env.template > skaffold.env
-envsubst < skaffold.yaml.template > skaffold.yaml
-envsubst < resources/manifest.yaml.template > resources/manifest.yaml
+envsubst < skaffold.env.tmpl > skaffold.env
+envsubst < skaffold.yaml.tmpl > skaffold.yaml
+envsubst < resources/manifest.yaml.tmpl > resources/manifest.yaml
 ```
 
 Then, you'll deploy the service using Skaffold with the following command:
@@ -255,8 +259,20 @@ Leave that terminal open streaming the logs, and open a new terminal tab to test
 
 In this new terminal, get the service url and store it in the environment variable `BACK_SERVICE_URL`:
 
+[Terminal 2]
 ```bash
 BACK_SERVICE_URL=$(gcloud run services describe back --region $REGION --format="value(status.url)")
+export BACK_SERVICE_URL
+```
+
+You also need to configure the receiving `back` service to accept requests from the `front` by making the calling service's service account a _principal_ on the receiving service. Then you grant the service account the Cloud Run Invoker (`roles/run.invoker`) role on the receiving service:
+
+[Terminal 2]
+```bash
+gcloud run services add-iam-policy-binding back \
+  --member=serviceAccount:front-sa@$PROJECT_ID.iam.gserviceaccount.com \
+  --role=roles/run.invoker \
+  --region $REGION
 ```
 
 Test the `get_votes` endpoint, this time using OAuth authentication by opening a new tab and running the following command:
@@ -280,15 +296,25 @@ server: Google Frontend
 * Connection #0 to host back-giunrmdkzq-ew.a.run.app left intact
 ```
 
+As Skaffold is proxyfying the connection to the `back` service, you could've also done this to test the service:
+
+[Terminal 2]
+```bash
+curl -v localhost:8081/get_votes
+```
+
+Note how thanks to the Cloud Run Proxy used by Skaffold you don't need to include the `Authorization` header in the request anymore.
+
+
 ## Deploying the `front` service onto Cloud Run
 
-You're still running `skaffold dev` in one terminal, and you're now working in the second terminal you opened to test the `back` service. You'll continue working ins this new terminal to prepare the `front` service code assets and project structure:
+You're still running `skaffold dev` in Terminal 1, and you've been working in a second terminal (Terminal 2) where you tested the `back` service. You'll continue working now in **Terminal 2** to prepare the `front` service code assets and project structure:
 
 [Terminal 2]
 ```bash
 cd $HOME/cnd
 mkdir -p front/src && cd front
-cp -r ../assets/front/* .
+cp -r ../assets/module4/front/. .
 ```
 
 You'll deploy the `front` service using the same `skaffold.yaml` file you used for the `back` service, but you'll need to change the service account identity to use. That's already done for you, the only remaining thing is to include the environment variables values the same way you did for the `back` service:
@@ -296,9 +322,9 @@ You'll deploy the `front` service using the same `skaffold.yaml` file you used f
 [Terminal 2]
 ```bash
 cd $HOME/cnd/front
-envsubst < skaffold.env.template > skaffold.env
-envsubst < skaffold.yaml.template > skaffold.yaml
-envsubst < resources/manifest.yaml.template > resources/manifest.yaml
+envsubst < skaffold.env.tmpl > skaffold.env
+envsubst < skaffold.yaml.tmpl > skaffold.yaml
+envsubst < resources/manifest.yaml.tmpl > resources/manifest.yaml
 ```
 
 Now deploy the `front` service using Skaffold:
