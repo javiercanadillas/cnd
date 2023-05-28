@@ -30,9 +30,9 @@ However, **if you're starting fresh from a new Qwiklabs lab** because you did Mo
   ```bash
   git clone https://github.com/javiercanadillas/cnd.git
   ```
-4. Run Module 2 steps replay script (yes, Module 2, not Module 3):
+4. Run Module 3 steps replay script:
   ```bash
-  cd "$HOME/cnd/assets/module2" && ./module2_replay_steps.bash
+  cd "$HOME/cnd/assets/module3" && ./module3_replay_steps.bash
   ``` 
 5. As requested in the output of the previous script, source your `.bashrc` file
   ```bash
