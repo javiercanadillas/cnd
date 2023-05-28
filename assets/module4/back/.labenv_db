@@ -1,0 +1,10 @@
+#!/bin/false
+# shellcheck shell=bash
+# This script is intended to be sourced
+
+declare -x GOOGLE_CLOUD_PROJECT="PROJECT_ID"
+declare -x DB_INSTANCE=myinstance
+declare -x DB_NAME=mydatabase
+declare -x INSTANCE_CONNECTION_NAME="$GOOGLE_CLOUD_PROJECT:$REGION:$DB_INSTANCE"
+declare -x DB_USER=postgres
+declare -x DB_PASS=postgres
