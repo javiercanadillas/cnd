@@ -42,6 +42,8 @@ google-auth==2.18.0
     # via cloud-sql-python-connector
 greenlet==2.0.2
     # via sqlalchemy
+gunicorn==20.1.0
+    # via -r requirements.in
 idna==3.4
     # via
     #   requests

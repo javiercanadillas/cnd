@@ -31,18 +31,22 @@ prepare_app_dir() {
 copy_assets_and_deps() {
   info "Copying code assets and basic app dependencies..."
   local -r cp_source="$script_dir"
-  # Copy the labenv_extra file
-  cp -- "$cp_source/.labenv_db" "$app_dir/.labenv_db"
-  source "$app_dir/.labenv_db"
   declare -a files_to_copy=(
     "Dockerfile"
     "requirements.txt"
+    ".dockerignore"
+    ".labenv_db"
+  )
+  for file in "${files_to_copy[@]}"; do
+    cp -- "$cp_source/$file" "$app_dir"
+  done
+  source "$app_dir/.labenv_db"
+  declare -a files_to_copy_src=(
     "connect_connector.py"
     "base_logger.py"
     "app.py"
-    ".dockerignore"
   )
-  for file in "${files_to_copy[@]}"; do
+  for file in "${files_to_copy_src[@]}"; do
     cp -- "$cp_source/$file" "$app_dir/src"
   done
   # Copy the templates dir
@@ -70,6 +74,18 @@ create_gcp_services() {
   gcloud sql databases create "$DB_NAME" \
     --instance="$DB_INSTANCE" \
     --quiet
+}
+
+## Create Database
+create_db() {
+  info "Creating the TABS vs SPACES database..."
+  pushd $app_dir || { error "Failed to move to dir $app_dir. Exiting"; exit 1; }
+  python -m venv .venv
+  source .venv/bin/activate
+  pip install -r requirements.txt
+  cp "$script_dir/create_db.py" "$app_dir/src"
+  python src/create_db.py
+  popd || exit 1
 }
 
 ## Deploy the app to Cloud Run
@@ -109,6 +125,7 @@ main() {
   prepare_app_dir
   copy_assets_and_deps
   create_gcp_services
+  create_db
   deploy_to_cloudrun
   wrap_up false
 }
