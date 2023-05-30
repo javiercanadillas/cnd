@@ -338,19 +338,3 @@ Observe how Skaffold proceeds to build the container image, and then deploys the
 
 Open a browser, and open [http://localhost:8080](http://localhost:8080). You should see the tabs vs spaces voting app, and you should be able to vote for your favorite option. Going from Terminal 1 to Terminal 2, you should the logs for both services and see how the votes are being stored in the database and retrieved from it.
 
-----
-
-
-Deploy the `front` service assigning the recently created `front-sa` service account identity to it and the `BACK_SERVICE_URL` environment variable:
-
-```bash
-gcloud run deploy front \
-  --source . \
-  --platform managed \
-  --region $REGION \
-  --allow-unauthenticated \
-  --service-account front-sa@$PROJECT_ID.iam.gserviceaccount.com \
-  --set-env-vars BACK_SERVICE_URL=$BACK_SERVICE_URL
- ```
-
-## Using Cloud Secret Manager to protect the database credentials
